@@ -17,8 +17,12 @@ ENV PATH $PATH:/usr/local/pgsql/bin
 RUN mkdir /usr/local/pgsql/data && useradd -m postgres && chown postgres /usr/local/pgsql/data
 RUN sudo -iu postgres /usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data
 
-EXPOSE 5432
-
 USER postgres
 
-CMD postgres -D /usr/local/pgsql/data
+RUN echo "host  all   all    0.0.0.0/0   trust" >> /usr/local/pgsql/data/pg_hba.conf
+
+RUN echo "listen_addresses='*'" >> /usr/local/pgsql/data/postgresql.conf
+
+EXPOSE 5432
+
+CMD postgres -D /usr/local/pgsql/data -c config_file=/usr/local/pgsql/data/postgresql.conf
